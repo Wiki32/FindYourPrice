@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quién eres?</title>
+    <link rel="stylesheet" href="../CSS/style_selling_site.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header con logo centrado -->
+    <header class="header header-simple">
+        <div class="header-center">
+            <a href="../home.html" id="logo-link">
+                <img src="../find_your_price_logo_centered.png" alt="Find Your Price" class="header-logo-centered">
+                <!-- derecha vacía para centrar el logo -->
+            </a> 
+        </div>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+
+    <div class="main-wrapper">
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Volver atrás">
+            &#8592;
+        </a>
+        <div class="container">
+            <span class="container-top-right">Required</span>
+            <h1>Where are you selling?</h1>
+            <p>The more specific you are the better the price!</p>
+            <form class="single-choice-form" id="selling-site-form">
+                <label class="radio-option">
+            <input type="radio" name="role" value="physical_store" required>
+                <span>Physical Store</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="website">
+                <span>Website</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="online_marketplace">
+                <span>Online Marketplace</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="app">
+                <span>App</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="social_media">
+                <span>Social Media</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="popup_store">
+                <span>Pop-up Store</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="stand">
+                <span>Stand</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="wholesale">
+                <span>Wholesale</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="door_to_door">
+                <span>Door-to-Door</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="subscription_box">
+                <span>Subscription Box</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="farmers_market">
+                <span>Farmer's Market</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="fair">
+                <span>Fair</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="showroom">
+                <span>Showroom</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="partner_retailer">
+                <span>Partner Retailer</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="role" value="mobile_kiosk">
+                <span>Mobile Kiosk</span>
+            </label>
+            <label class="radio-option center-last">
+                <input type="radio" name="role" value="other">
+                <span>Other</span>
+            </label>
+            <div id="custom-input-container" required maxlength="200" style="width:100%; display:none; grid-column: 1 / -1; margin-top:18px;">
+                <input
+                    type="text"
+                    id="custom-input"
+                    name="custom-input"
+                    placeholder="Add more details..."
+                    style="width:100%; max-width:800px; padding:12px; border-radius:12px; border:2px solid #dbe2e9; font-size:1.1rem;"
+                >
+                <div style="display:flex; justify-content: flex-end; margin-top: 4px;">
+                    <span id="char-count" style="color:#4a90e2; font-size:0.98rem;">0/200</span>
+                </div>
+            </div>
+            
+
+            <button type="button" id="send-to-chatgpt" class="btn">Calculate</button>           
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer opcional -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../home.html" id="footer-logo-link">
+                    <img src="../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img">
+                </a>            </div>
+            <div class="footer-links">
+                <a href="../privacyPolicy.html">Privacy Policy</a>
+                <a href="../legalAdvise.html">Legal Notice</a>
+                <a href="../cookies.html">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../JS/validate-radio.js"></script>
+    <script src="../JS/utils_formdata.js"></script>
+    <script src="../JS/reset_data_logo.js"></script>
+    <script src="../JS/form_step5_selling_site.js"></script>
+    <script type="module" src="../JS/calculate_price.js"></script>
+
+    <script>
+    // Cambia este valor según el paso (1, 2, 3, etc.)
+    const currentStep = 7; // Ejemplo: si estás en la página 2
+    const totalSteps = 8;
+
+    // Actualiza la barra
+    document.addEventListener('DOMContentLoaded', function () {
+        const bar = document.getElementById('progress-bar');
+        if (bar) {
+        const percent = Math.round((currentStep / totalSteps) * 100);
+        bar.style.width = percent + '%';
+        }
+    });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const radios = document.querySelectorAll('.radio-option input[type="radio"]');
+        const inputContainer = document.getElementById('custom-input-container');
+        const customInput = document.getElementById('custom-input');
+        
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+            // Mostrar el campo siempre al elegir una opción
+            inputContainer.style.display = 'block';
+            // Placeholder con el nombre de la opción
+            customInput.placeholder = `Add details for "${this.parentNode.querySelector('span').innerText}" (Optional)`;
+            customInput.value = '';
+            });
+        });
+        });
+    </script>
+
+    <script>
+        // Actualiza el contador de caracteres en tiempo real
+        document.addEventListener('DOMContentLoaded', function () {
+            const radios = document.querySelectorAll('.radio-option input[type="radio"]');
+            const inputContainer = document.getElementById('custom-input-container');
+            const customInput = document.getElementById('custom-input');
+            const charCount = document.getElementById('char-count');
+            
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                inputContainer.style.display = 'block';
+                customInput.placeholder = `Add details for "${this.parentNode.querySelector('span').innerText}" (Optional)`;
+                customInput.value = '';
+                charCount.textContent = '0/200';
+                });
+            });
+
+            if (customInput) {
+                customInput.addEventListener('input', function() {
+                charCount.textContent = `${this.value.length}/200`;
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

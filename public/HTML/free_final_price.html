@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calcula el mejor precio para tu producto</title>
+
+  <link rel="stylesheet" href="../CSS/style_final_price.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Cabecera -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <a href="../home.html" id="logo-link">
+          <img src="../find_your_price_logo_website.png" alt="Find Your Price" class="logo-img">
+        </a>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <a href="../home.html" class="nav-link">Home</a>
+      <a href="../Solutions.html" class="nav-link">Solutions</a>
+      <a href="../Contact.html" class="nav-link">Contact</a>
+    </nav>
+  </header>
+
+  <!-- ENVOLTORIO FLEX -->
+  <div class="main-wrapper">
+    <div class="container">
+      <h2 id="final-title">Recommended price of <span id="productName"></span> in <span id="location"></span> is</h2>
+      <h1 id="final-price"></h1>
+      <a href="../home.html" id="calculate-another-price" class="btn">Calculate Another Price</a>
+    </div>
+  </div>
+
+  <div id="chatgpt-response"></div>
+
+  <!-- Loader overlay -->
+  <div id="chat-loader" class="chat-loader" hidden aria-live="polite" aria-busy="true">
+    <img class="logo-spin" src="../find_your_price_icon.png" alt="Calculating the best price…" width="96" height="96">
+    <div class="loader-label">Calculating price</div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <a href="../home.html">
+          <img src="../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img">
+        </a>
+      </div>
+      <div class="footer-links">
+        <a href="../privacyPolicy.html">Privacy Policy</a>
+        <a href="../legalAdvise.html">Legal Notice</a>
+        <a href="../cookies.html">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../JS/utils_formdata.js"></script>
+  <script src="../JS/reset_data_logo.js"></script>
+  <script>
+    window.PRICE_API_URL =
+      window.PRICE_API_URL || "http://localhost:3001/api/calculate-price";
+  </script>
+  <script type="module" src="../JS/calculate_price.js"></script>
+</body>
+</html>

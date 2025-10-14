@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Name and Product Description</title>
+    <link rel="stylesheet" href="../CSS/style_description.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header header-simple">
+        <div class="header-center">
+            <a href="../home.html" id="logo-link">
+                <img src="../find_your_price_logo_centered.png" alt="Find Your Price" class="header-logo-centered">
+                <!-- derecha vacía para centrar el logo -->
+            </a> 
+        </div>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <main class="main-content">
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Volver atrás">
+            &#8592;
+        </a>
+        <section class="section name-section">
+            <div class="container">
+                <span class="container-top-right">Required</span>
+                <h1 for="nombre">Business Name</h1>
+                <form class="text-form" id="name-form">
+                    <input type="text" id="nombre" name="nombre" required placeholder="Write here">
+                </form>
+            </div>
+        </section>
+
+        <section class="section product-section">
+            <div class="container">
+                <span class="container-top-right">Required</span>
+                <h1>Product or Service</h1>
+                <p>Put the name of your product or service.</p>
+                <form class="text-form" id="product-name-form">
+                <!-- id y name sin guiones -->
+                <input
+                    type="text"
+                    id="productName"
+                    name="productName"
+                    required
+                    placeholder="Write here">
+                </form>
+            </div>
+        </section>
+
+
+        <section class="section description-section">
+            <div class="container">
+                <span class="container-top-right">Required</span>
+                <h1-description for="descripcion">Product or Service Description</h1-description>
+                <p>The better you describe your product, the more exact the calculation of the price.</p>
+                <form class="text-form" id="description-form">
+                    <textarea id="descripcion" name="descripcion" required maxlength="800" placeholder="Write here (up to 800 characters)"></textarea>
+                    <div style="display:flex; justify-content: flex-end; margin-top: 4px;">
+                        <span id="char-count" style="color:#4a90e2; font-size:0.98rem;">0/800</span>
+                    </div>
+                    <button type="submit" class="btn">Next</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../home.html" id="footer-logo-link"><img src="../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img"></a>
+            </div>
+            <div class="footer-links">
+                <a href="../privacyPolicy.html">Privacy Policy</a>
+                <a href="../legalAdvise.html">Legal Notice</a>
+                <a href="../cookies.html">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Cambia este valor según el paso (1, 2, 3, etc.)
+        const currentStep = 2; // Ejemplo: si estás en la página 2
+        const totalSteps = 8;
+
+        // Actualiza la barra
+        document.addEventListener('DOMContentLoaded', function () {
+            const bar = document.getElementById('progress-bar');
+            if (bar) {
+            const percent = Math.round((currentStep / totalSteps) * 100);
+            bar.style.width = percent + '%';
+            }
+        });
+    </script>
+
+    <script src="../JS/utils_formdata.js"></script>
+    <script src="../JS/form_step2_name_and_description.js"></script>
+    <script>
+      // Actualiza el contador de caracteres en tiempo real
+      const textarea = document.getElementById('descripcion');
+      const count = document.getElementById('char-count');
+      if (textarea) {
+        textarea.addEventListener('input', () => {
+          count.textContent = `${textarea.value.length}/800`;
+        });
+      }
+    </script>
+    <script src="../JS/autosize_text.js"></script>
+    <script src="../JS/reset_data_logo.js"></script>
+    <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Save business name
+    const nameForm = document.getElementById('name-form');
+    if (nameForm) {
+        nameForm.addEventListener('submit', function(e) {
+            const nombre = document.getElementById('nombre').value;
+            updateFormData({ nombre });
+        });
+    }
+    // Save description
+    const descForm = document.getElementById('description-form');
+    if (descForm) {
+        descForm.addEventListener('submit', function(e) {
+            const descripcion = document.getElementById('descripcion').value;
+            updateFormData({ descripcion });
+        });
+    }
+});
+</script>
+</body>
+</html>

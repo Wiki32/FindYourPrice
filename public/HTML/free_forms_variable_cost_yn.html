@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variable Costs</title>
+    <link rel="stylesheet" href="../CSS/style_vc_yn.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header con logo centrado -->
+    <header class="header header-simple">
+        <div class="header-center">
+            <a href="../home.html" id="logo-link">
+                <img src="../find_your_price_logo_centered.png" alt="Find Your Price" class="header-logo-centered">
+            </a> 
+        </div>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="main-wrapper">
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Volver atrás">&#8592;</a>
+        <div class="container">
+            <span class="container-top-right">Required</span>
+            <h1>Do you have any variable costs?</h1>
+            <p>Choose one option.</p>
+            <form class="single-choice-form" id="variable-cost-form" action="free_forms_location_currency.html" method="GET">
+                <label class="radio-option">
+                    <input type="radio" name="variable_costs_yesno" value="yes" required>
+                    <span>Yes</span>
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="variable_costs_yesno" value="no">
+                    <span>No</span>
+                </label>
+                <button type="submit" class="btn" id="next-btn-default">Next</button>            
+            </form>
+        </div>
+
+        <!-- Este contenedor estará oculto al inicio -->
+        <div class="container" id="extra-container" style="display:none; margin-top:56px;">
+            <span class="container-top-right">Optional</span>
+            <h1>Specify your variable costs</h1>
+            <p>
+                Write down your variable costs in the text area below.<br>
+                The variable cost is the amount it costs to produce one unit of a product, including materials and production expenses, but excluding fixed costs like salaries or rent.
+            </p>
+            <form class="text-form" id="variable-costs-form">
+                <div class="input-currency-row">
+                    <textarea id="variable-costs" name="variable-costs" maxlength="30" placeholder="Put the number here"></textarea>
+                    <div class="custom-dropdown" id="currency-dropdown">
+                        <!-- INPUT HELPER PARA VALIDACIÓN NATIVA -->
+                        <input type="text" id="currency-helper" style="opacity:0; position:absolute; pointer-events:none; width:0; height:0; margin:0; padding:0;" required>
+                        <input type="hidden" name="currency" id="currency-value" value="">
+                        <div class="dropdown-selected" tabindex="0">
+                            <span id="dropdown-value">Select one</span>
+                            <span class="dropdown-arrow">&#9662;</span>
+                        </div>
+                        <div class="dropdown-list" id="dropdown-list">
+                            <input type="text" class="dropdown-search" placeholder="Search">
+                            <div class="dropdown-options"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn" id="next-btn-extra">Next</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer opcional -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../home.html" id="footer-logo-link">
+                    <img src="../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img">
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="../privacyPolicy.html">Privacy Policy</a>
+                <a href="../legalAdvise.html">Legal Notice</a>
+                <a href="../cookies.html">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../JS/validate-radio.js"></script>
+    <script src="../JS/utils_formdata.js"></script>
+    <script src="../JS/form_step3_variable_cost.js"></script>
+    <script src="../JS/reset_data_logo.js"></script>
+    <script>
+    // Cambia este valor según el paso (1, 2, 3, etc.)
+    const currentStep = 3; // Ejemplo: si estás en la página 2
+    const totalSteps = 8;
+
+    // Actualiza la barra
+    document.addEventListener('DOMContentLoaded', function () {
+        const bar = document.getElementById('progress-bar');
+        if (bar) {
+            const percent = Math.round((currentStep / totalSteps) * 100);
+            bar.style.width = percent + '%';
+        }
+    });
+
+    // --------- Validación NATIVA para divisa obligatoria si hay número ---------
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('variable-costs-form');
+        if (!form) return;
+        const textarea = document.getElementById('variable-costs');
+        const currencyValue = document.getElementById('currency-value');
+        const currencyHelper = document.getElementById('currency-helper');
+
+        form.addEventListener('submit', function(e) {
+            const regex = /^[0-9.,\s]+$/;
+            const value = textarea.value.trim();
+            const currency = currencyValue.value.trim();
+
+            // Si hay número y no hay moneda, fuerza el error nativo
+            if (value !== '' && regex.test(value) && !currency) {
+                currencyHelper.value = '';
+                currencyHelper.focus();
+                e.preventDefault();
+                return false;
+            }
+            // Si todo bien, sincroniza helper (por si era el último campo requerido)
+            currencyHelper.value = currency;
+        });
+    });
+    </script>
+    <script src="../JS/dropdown-currency.js"></script>
+</body>
+</html>

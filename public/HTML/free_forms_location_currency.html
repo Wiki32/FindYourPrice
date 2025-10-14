@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Name and Product Description</title>
+
+  <link rel="stylesheet" href="../CSS/style_location.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Sugerencias de Google por encima -->
+  <style>
+    .pac-container { z-index: 3000 !important; }
+    /* HOTFIX: el input de Location no hereda max-height:0 */
+    #location { max-height: none !important; }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header header-simple">
+    <div class="header-center">
+      <a href="../home.html" id="logo-link">
+        <img src="../find_your_price_logo_centered.png" alt="Find Your Price" class="header-logo-centered" />
+      </a>
+    </div>
+  </header>
+
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <main class="main-content">
+    <a href="javascript:history.back()" class="back-arrow" aria-label="Volver atrás">&#8592;</a>
+
+    <!-- ======== LOCATION ======== -->
+    <section class="section location-section">
+      <div class="container_location">
+        <span class="container-top-right">Required</span>
+        <h1 for="nombre">Location</h1>
+        <p>Select the location you are planning to sell, it can be a country, city, street.</p>
+
+        <form class="text-form-location" id="location-form" autocomplete="off">
+          <input type="text" id="location" name="location" required placeholder="Write here" autocomplete="off" />
+
+          <!-- Hidden canónicos -->
+          <input type="hidden" id="place_id" name="place_id" />
+          <input type="hidden" id="lat" name="lat" />
+          <input type="hidden" id="lng" name="lng" />
+          <input type="hidden" id="formatted_address" name="formatted_address" />
+          <input type="hidden" id="display_name" name="display_name" />
+          <input type="hidden" id="types" name="types" />
+        </form>
+      </div>
+    </section>
+
+    <!-- ======== CURRENCY (NO TOCAR) ======== -->
+    <section class="section description-section">
+      <div class="container">
+        <span class="container-top-right">Required</span>
+        <h1 class="h1-description">Currency</h1>
+        <p>Select the currency you are planning to sell.</p>
+
+        <form class="text-form" id="currency-form">
+          <div class="custom-dropdown" id="currency-dropdown">
+            <input type="text" id="currency-helper" style="opacity:0; position:absolute; pointer-events:none; width:0; height:0; margin:0; padding:0;" required />
+            <input type="hidden" name="currency" id="currency-value" value="" />
+
+            <div class="dropdown-selected" tabindex="0">
+              <span id="dropdown-value">Select one</span>
+              <span class="dropdown-arrow">&#9662;</span>
+            </div>
+
+            <div class="dropdown-list" id="dropdown-list">
+              <input type="text" class="dropdown-search" placeholder="Search" />
+              <div class="dropdown-options"></div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn">Next</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <a href="../home.html" id="footer-logo-link">
+          <img src="../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img" />
+        </a>
+      </div>
+
+      <div class="footer-links">
+        <a href="../privacyPolicy.html">Privacy Policy</a>
+        <a href="../legalAdvise.html">Legal Notice</a>
+        <a href="../cookies.html">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Scripts ===== -->
+
+  <!-- Progreso -->
+  <script>
+    const currentStep = 5, totalSteps = 8;
+    document.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('progress-bar');
+      if (bar) bar.style.width = Math.round((currentStep / totalSteps) * 100) + '%';
+    });
+  </script>
+
+  <!-- Utilidades de storage -->
+  <script src="../JS/utils_formdata.js"></script>
+
+  <!-- Tu dropdown de currency -->
+  <script src="../JS/autosize_text.js"></script>
+  <script src="../JS/reset_data_logo.js"></script>
+  <script src="../JS/dropdown-currency.js"></script>
+
+  <!-- NUEVO: lógica de Places (tu archivo define initPlaceAutocomplete) -->
+  <script src="../JS/location_autocomplete.js"></script>
+
+  <!-- SDK Google Maps -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyDvXyzfN67dloGVMlU6dI5MnnNascNQc&libraries=places&v=weekly&callback=initPlaceAutocomplete"></script>
+
+  <!-- LÓGICA DE PASO (consolidada) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1) Rellenar valores guardados
+      const data = getFormData();
+
+      // LOCATION
+      const locationInput = document.getElementById('location');
+      if (locationInput) {
+        if (data.location) locationInput.value = data.location;
+
+        // Guardar en cada cambio
+        locationInput.addEventListener('input', function () {
+          updateFormData({ location: locationInput.value });
+        });
+      }
+
+      // CURRENCY
+      const currencyValueInput = document.getElementById('currency-value');
+      const dropdownValue = document.getElementById('dropdown-value');
+      if (currencyValueInput && data.currency) {
+        currencyValueInput.value = data.currency;
+        if (dropdownValue) dropdownValue.textContent = data.currency;
+      }
+
+      // Si tu custom dropdown dispara un "change" o un callback, asegúrate de actualizar formData
+      if (currencyValueInput) {
+        currencyValueInput.addEventListener('change', function () {
+          updateFormData({ currency: currencyValueInput.value });
+          if (dropdownValue) dropdownValue.textContent = currencyValueInput.value;
+        });
+      }
+
+      // 2) Validación y navegación al enviar
+      const formLocation = document.getElementById('location-form');
+      const formCurrency = document.getElementById('currency-form');
+
+      // Evitar reload accidental en Location (Enter)
+      if (formLocation) {
+        formLocation.addEventListener('submit', function (e) {
+          e.preventDefault();
+        });
+      }
+
+      // Validar ambos al pulsar "Next" (submit de currency)
+      if (formCurrency) {
+        formCurrency.addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          // Validar location
+          if (!locationInput.value.trim()) {
+            locationInput.reportValidity();
+            locationInput.focus();
+            return;
+          }
+
+          // Validar currency
+          if (!currencyValueInput.value.trim()) {
+            document.getElementById('currency-helper')?.reportValidity?.();
+            if (dropdownValue) dropdownValue.style.color = "red";
+            return;
+          }
+
+          // Guardar por si acaso y navegar
+          updateFormData({
+            location: locationInput.value.trim(),
+            currency: currencyValueInput.value.trim()
+          });
+
+          window.location.href = "free_forms_selling_site.html"; // Siguiente paso
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+<!--
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Name and Product Description</title>
+    <link rel="stylesheet" href="../CSS/style_location.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <header class="header header-simple">
+        <div class="header-center">
+            <a href="../../home.html" id="logo-link">
+                <img src="../find_your_price_logo_centered.png" alt="Find Your Price" class="header-logo-centered">
+            </a>
+        </div>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <main class="main-content">
+        <a href="javascript:history.back()" class="back-arrow" aria-label="Volver atrás">
+            &#8592;
+        </a>
+        <section class="section location-section">
+            <div class="container_location">
+                <span class="container-top-right">Required</span>
+                <h1 for="nombre">Location</h1>
+                <p>Select the location you are planning to sell, it can be a country, city, street.</p>
+                <form class="text-form-location" id="location-form">
+                    <input type="text" id="location" name="location" required autocomplete="off" placeholder="Write here">
+                </form>
+            </div>
+        </section>
+
+        <section class="section description-section">
+            <div class="container">
+                <span class="container-top-right">Required</span>
+                <h1 class="h1-description">Currency</h1>
+                <p>Select the currency you are planning to sell.</p>
+                <form class="text-form" id="currency-form">
+                    <div class="custom-dropdown" id="currency-dropdown">
+                    
+                        <input type="text" id="currency-helper" style="opacity:0; position:absolute; pointer-events:none; width:0; height:0; margin:0; padding:0;" required>
+                        <input type="hidden" name="currency" id="currency-value" value="">
+                        <div class="dropdown-selected" tabindex="0">
+                            <span id="dropdown-value">Select one</span>
+                            <span class="dropdown-arrow">&#9662;</span>
+                        </div>
+                        <div class="dropdown-list" id="dropdown-list">
+                            <input type="text" class="dropdown-search" placeholder="Search">
+                            <div class="dropdown-options"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Next</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../../home.html" id="footer-logo-link"><img src="../../find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img"></a>
+            </div>
+            <div class="footer-links">
+                <a href="../privacyPolicy.html">Privacy Policy</a>
+                <a href="../legalAdvise.html">Legal Notice</a>
+                <a href="../cookies.html">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Cambia este valor según el paso (1, 2, 3, etc.)
+        const currentStep = 5; // Ejemplo: si estás en la página 2
+        const totalSteps = 8;
+
+        // Actualiza la barra
+        document.addEventListener('DOMContentLoaded', function () {
+            const bar = document.getElementById('progress-bar');
+            if (bar) {
+                const percent = Math.round((currentStep / totalSteps) * 100);
+                bar.style.width = percent + '%';
+            }
+        });
+    </script>
+
+    <script src="../JS/utils_formdata.js"></script>
+    <script src="../JS/autosize_text.js"></script>
+    <script src="../JS/reset_data_logo.js"></script>
+    <script src="../JS/dropdown-currency.js"></script>
+    <script src="../JS/form_step4_location.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Save location
+        const locationForm = document.getElementById('location-form');
+        if (locationForm) {
+            locationForm.addEventListener('submit', function(e) {
+                const location = document.getElementById('location').value;
+                updateFormData({ location });
+            });
+        }
+        // Save currency
+        const currencyForm = document.getElementById('currency-form');
+        if (currencyForm) {
+            currencyForm.addEventListener('submit', function(e) {
+                const currency = document.getElementById('currency-value').value;
+                updateFormData({ currency });
+            });
+        }
+
+        // --- GOOGLE PLACES AUTOCOMPLETE ---
+        function initAutocomplete() {
+            const locationInput = document.getElementById('location');
+            if (!locationInput) return;
+            // Permite países, ciudades, calles
+            const autocomplete = new google.maps.places.Autocomplete(locationInput, {
+                types: ['(regions)'], // Puedes cambiar a ['geocode'] si prefieres direcciones completas
+            });
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    locationInput.value = place.formatted_address;
+                    updateFormData({ location: place.formatted_address });
+                } else if (place.name) {
+                    locationInput.value = place.name;
+                    updateFormData({ location: place.name });
+                }
+            });
+        }
+
+        // Espera a que Google esté disponible (por si acaso)
+        if (window.google && google.maps && google.maps.places) {
+            initAutocomplete();
+        } else {
+            let checkGoogle = setInterval(() => {
+                if (window.google && google.maps && google.maps.places) {
+                    clearInterval(checkGoogle);
+                    initAutocomplete();
+                }
+            }, 500);
+        }
+    });
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&libraries=places"></script>
+</body>
+</html> -->
