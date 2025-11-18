@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calcula el mejor precio para tu producto</title>
+    <meta name="price-api-url" content="/api/calculate-price" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles/styles.css" />
+  </head>
+  <body data-layout="result">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <a href="../index.html#/home" data-reset-form>
+            <img src="../assets/find_your_price_logo_website.png" alt="Find Your Price" class="logo-img" />
+          </a>
+        </div>
+      </div>
+      <nav class="navbar">
+        <a href="../index.html#/home" class="nav-link" data-nav="/home" data-reset-form>Home</a>
+        <a href="../index.html#/solutions" class="nav-link" data-nav="/solutions">Solutions</a>
+        <a href="../index.html#/blog" class="nav-link" data-nav="/blog">Blog</a>
+        <a href="../index.html#/contact" class="nav-link" data-nav="/contact">Contact</a>
+      </nav>
+      <div class="header-right">
+        <a href="../index.html#/forms/who" class="button_header" data-reset-form>Find Your Costs</a>
+      </div>
+    </header>
+
+    <div class="main-wrapper">
+      <div class="container">
+        <h2 id="final-title">Recommended price of <span id="productName"></span> in <span id="location"></span> is</h2>
+        <h1 id="final-price"></h1>
+        <a href="../index.html#/forms/who" id="calculate-another-price" class="btn" data-reset-form>Calculate Another Price</a>
+      </div>
+    </div>
+
+    <div id="chatgpt-response"></div>
+
+    <div id="chat-loader" class="chat-loader" hidden aria-live="polite" aria-busy="true">
+      <img class="logo-spin" src="../assets/find_your_price_icon.png" alt="Calculating the best price…" width="96" height="96">
+      <div class="loader-label">Calculating price</div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <a href="../index.html#/home" data-reset-form>
+            <img src="../assets/find_your_price_logo_footer.png" alt="Find Your Price" class="footer-logo-img" />
+          </a>
+        </div>
+        <div class="footer-links">
+          <a href="../index.html#/privacy" data-nav="/privacy">Privacy Policy</a>
+          <a href="../index.html#/legal" data-nav="/legal">Legal Notice</a>
+          <a href="../index.html#/cookies" data-nav="/cookies">Cookies</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="../scripts/views/final-price.js"></script>
+  </body>
+</html>
