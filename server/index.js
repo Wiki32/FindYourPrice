@@ -10,17 +10,63 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const CLIENT_DIR = path.resolve(__dirname, "../client/public");
 
-const defaultOrigins = ["http://localhost:5500", "http://127.0.0.1:5500"];
-const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || defaultOrigins.join(","))
-  .split(",")
-  .map((s) => s.trim())
-  .filter(Boolean);
+const defaultOrigins = [
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "https://wiki32.github.io",
+  "https://findyourprice.ai",
+  "https://www.findyourprice.ai"
+];
+
+const splitOrigins = (value) =>
+  value
+    .split(/[\s,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const normalizeOrigin = (origin) => {
+  if (!origin || origin === "*") return origin;
+  const trimmed = origin.replace(/\/+$/, "");
+  return trimmed.toLowerCase();
+};
+
+const originMatchers = (() => {
+  const envOrigins = process.env.CORS_ALLOWED_ORIGINS;
+  const raw =
+    typeof envOrigins === "string" && envOrigins.trim().length > 0
+      ? envOrigins
+      : defaultOrigins.join(",");
+  const entries = splitOrigins(raw);
+  return entries.map((entry) => {
+    const normalized = normalizeOrigin(entry);
+    if (!normalized || normalized === "*") {
+      return () => true;
+    }
+    if (normalized.includes("*")) {
+      const escaped = normalized.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+      const pattern = `^${escaped.replace(/\\\*/g, ".*")}$`;
+      const regex = new RegExp(pattern, "i");
+      return (origin) => !!origin && regex.test(normalizeOrigin(origin));
+    }
+    return (origin) => normalizeOrigin(origin) === normalized;
+  });
+})();
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  return originMatchers.some((match) => {
+    try {
+      return match(origin);
+    } catch {
+      return false;
+    }
+  });
+};
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+      if (isOriginAllowed(origin)) {
         return callback(null, true);
       }
       console.warn(`Blocked CORS origin: ${origin}`);
