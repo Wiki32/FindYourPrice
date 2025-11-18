@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const CLIENT_DIR = path.resolve(__dirname, "../client/public");
 
 const defaultOrigins = ["http://localhost:5500", "http://127.0.0.1:5500"];
 const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || defaultOrigins.join(","))
@@ -74,8 +75,17 @@ app.post("/api/calculate-price", async (req, res) => {
   }
 });
 
-app.use((req, res) => {
+app.use("/api", (req, res) => {
   res.status(404).json({ error: { message: "Not found" } });
+});
+
+app.use(express.static(CLIENT_DIR));
+
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api/") || req.method !== "GET" || !req.accepts("html")) {
+    return next();
+  }
+  res.sendFile(path.join(CLIENT_DIR, "index.html"));
 });
 
 app.listen(PORT, () => {
