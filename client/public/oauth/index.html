@@ -35,16 +35,66 @@
 
     <div class="main-wrapper">
       <div class="container">
-        <h2 id="final-title">Recommended price of <span id="productName"></span> in <span id="location"></span> is</h2>
-        <h1 id="final-price"></h1>
-        <a href="../index.html#/forms/who" id="calculate-another-price" class="btn" data-reset-form>Calculate Another Price</a>
+        <section class="free-price-card">
+          <h2 id="final-title">Recommended price of <span id="productName"></span> in <span id="location"></span> is</h2>
+          <h1 id="final-price"></h1>
+          <div class="free-actions">
+            <div class="action-block">
+              <a href="../index.html#/forms/who" id="calculate-another-price" class="btn btn-ghost" data-reset-form>Calculate Another Price</a>
+            </div>
+            <div class="action-block reasoning-block">
+              <button type="button" class="btn">See Reasoning</button>
+              <span class="reasoning-price">+0.99</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="premium-cta">
+          <div class="cta-header">
+            <span class="micro-title">Refine your price</span>
+            <h3>Get your final price — powered by our most advanced AI</h3>
+            <p class="cta-subtitle">Get a fully justified price and a complete professional report tailored to your product and market.</p>
+          </div>
+
+          <div class="cta-grid">
+            <ul class="cta-list">
+              <li>
+                <span class="bullet-icon" aria-hidden="true">📊</span>
+                <div class="cta-text">
+                  <strong>Competitors analysis</strong>
+                  <span class="cta-desc">Benchmark real competitors, key players and positioning.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-icon" aria-hidden="true">👥</span>
+                <div class="cta-text">
+                  <strong>Customer analysis</strong>
+                  <span class="cta-desc">Identify your ideal buyer and willingness-to-pay signals.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-icon" aria-hidden="true">💡</span>
+                <div class="cta-text">
+                  <strong>Price justification</strong>
+                  <span class="cta-desc">Price psychology, market benchmarks and competitor comparison.</span>
+                </div>
+              </li>
+            </ul>
+            <div class="cta-action-block">
+              <h4>Get your optimized price</h4>
+              <p class="cta-highlight">Our advanced AI calculates the most accurate price. Answer just a few extra questions and we’ll refine your case.</p>
+              <p>Unlimited locations and products.</p>
+              <button type="button" id="continue-paid-flow" class="btn">Continue</button>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 
     <div id="chatgpt-response"></div>
 
     <div id="chat-loader" class="chat-loader" hidden aria-live="polite" aria-busy="true">
-      <img class="logo-spin" src="../assets/find_your_price_icon.png" alt="Calculating the best price…" width="96" height="96">
+      <img class="logo-spin" src="../assets/find_your_price_icon.png" alt="Calculating the best price…">
       <div class="loader-label">Calculating price</div>
     </div>
 

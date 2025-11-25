@@ -204,6 +204,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (data[key] !== undefined) el.textContent = data[key];
   });
 
+  const continueBtn = document.getElementById("continue-paid-flow");
+  continueBtn?.addEventListener("click", () => {
+    try {
+      window.sessionStorage?.setItem("premiumFlowIntent", "true");
+    } catch (err) {
+      console.warn("Could not persist premium intent", err);
+    }
+    window.location.href = "../index.html#/forms/who";
+  });
+
   window.formDataVars = {
     role,
     nombre,
